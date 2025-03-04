@@ -15,8 +15,7 @@ public class App
         Renderer renderer = context.getBean(Renderer.class);
 
         renderer.render();
-
-        ((AnnotationConfigApplicationContext) context).close();
+        
     }
 
     @Bean
