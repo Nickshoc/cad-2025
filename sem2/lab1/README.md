@@ -1,5 +1,9 @@
 # Отчет о лабораторной работе
 
+## Цель работы
+
+Получить практические навыки работы с Spring Framework. 
+
 ## Выполнение работы
 
 <img width="606" height="361" alt="image" src="https://github.com/user-attachments/assets/dcdeb1b9-6228-42c4-ae31-1d23a2027e8f" />
