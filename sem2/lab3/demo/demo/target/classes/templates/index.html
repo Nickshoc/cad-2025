@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Сервисный центр компьютерной техники</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .order-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .status-new { background-color: #e3f2fd; }
+        .status-accepted { background-color: #fff3cd; }
+        .status-rejected { background-color: #f8d7da; }
+        .status-completed { background-color: #d4edda; }
+        .overdue { border-left: 4px solid #dc3545; }
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-new-badge { background-color: #2196F3; color: white; }
+        .status-accepted-badge { background-color: #ffc107; color: black; }
+        .status-rejected-badge { background-color: #dc3545; color: white; }
+        .status-completed-badge { background-color: #28a745; color: white; }
+        .overdue-badge { background-color: #dc3545; color: white; }
+        .form-group { margin: 10px 0; }
+        label { display: inline-block; width: 150px; }
+        input, select, textarea { padding: 5px; margin: 5px 0; }
+        button { padding: 8px 15px; margin: 5px; cursor: pointer; }
+        .actions { margin-top: 10px; }
+        .user-info { float: right; color: #666; }
+        .role-badge {
+            background-color: #6c757d;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+        .user-label {
+            font-size: 12px;
+            color: #888;
+        }
+        .username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Сервисный центр компьютерной техники
+    <div class="user-info">
+        <span class="user-label">Пользователь:</span>
+        <span class="username" th:text="${username}"></span>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" style="background: none; border: none; color: #007bff; cursor: pointer; padding: 0; text-decoration: underline;">Выйти</button>
+        </form>
+    </div>
+    </h1>
+
+    <div th:if="${orders.empty}">
+        <p>Нет активных заявок на ремонт.</p>
+    </div>
+
+    <div th:each="order : ${orders}"
+         th:classappend="'status-' + ${order.status.toLowerCase()} + (${order.deadline} < ${today} and ${order.status} != 'COMPLETED' ? ' overdue' : '')"
+         class="order-card">
+        <h3 th:text="'Заявка №' + ${order.id}"></h3>
+        <div class="form-group">
+            <strong>Устройство:</strong>
+            <span th:text="${order.deviceType} + ' ' + ${order.deviceModel}"></span>
+        </div>
+        <div class="form-group">
+            <strong>Проблема:</strong>
+            <span th:text="${order.problemDescription}"></span>
+        </div>
+        <div class="form-group">
+            <strong>Клиент:</strong>
+            <span th:text="${order.clientName} + ' (' + ${order.clientPhone} + ')'"></span>
+        </div>
+        <div class="form-group">
+            <strong>Дата создания:</strong>
+            <span th:text="${#temporals.format(order.creationDate, 'dd.MM.yyyy')}"></span>
+        </div>
+        <div class="form-group">
+            <strong>Срок выполнения:</strong>
+            <span th:text="${#temporals.format(order.deadline, 'dd.MM.yyyy')}"></span>
+            <span th:if="${order.deadline} < ${today} and ${order.status} != 'COMPLETED'"
+                  class="status-badge overdue-badge">ПРОСРОЧЕНО</span>
+        </div>
+        <div class="form-group">
+            <strong>Статус:</strong>
+            <span th:if="${order.status == 'NEW'}" class="status-badge status-new-badge">НОВАЯ</span>
+            <span th:if="${order.status == 'ACCEPTED'}" class="status-badge status-accepted-badge">ПРИНЯТА</span>
+            <span th:if="${order.status == 'REJECTED'}" class="status-badge status-rejected-badge">ОТКЛОНЕНА</span>
+            <span th:if="${order.status == 'COMPLETED'}" class="status-badge status-completed-badge">ВЫПОЛНЕНА</span>
+        </div>
+        <div th:if="${order.operatorComment}" class="form-group">
+            <strong>Комментарий оператора:</strong>
+            <span th:text="${order.operatorComment}" style="color: #666; font-style: italic;"></span>
+        </div>
+        <div th:if="${order.createdBy}" class="form-group">
+            <strong>Создал:</strong>
+            <span th:text="${order.createdBy}"></span>
+        </div>
+
+        <div class="actions" th:if="${isOperator or isAdmin}">
+            <div th:if="${order.status == 'NEW'}">
+                <form th:action="@{/acceptOrder/{id}(id=${order.id})}" method="post" style="display:inline;">
+                    <button type="submit" style="background-color: #28a745; color: white;">Принять заявку</button>
+                </form>
+
+                <form th:action="@{/rejectOrder/{id}(id=${order.id})}" method="post" style="display:inline;">
+                    <input type="text" name="comment" placeholder="Причина отказа" required style="padding: 5px;">
+                    <button type="submit" style="background-color: #dc3545; color: white;">Отклонить заявку</button>
+                </form>
+            </div>
+
+            <div th:if="${order.status == 'ACCEPTED'}">
+                <form th:action="@{/completeOrder/{id}(id=${order.id})}" method="post" style="display:inline;">
+                    <button type="submit" style="background-color: #17a2b8; color: white;">Отметить выполненной</button>
+                </form>
+            </div>
+
+            <div th:if="${isAdmin}">
+                <a th:href="@{/deleteOrder/{id}(id=${order.id})}"
+                   onclick="return confirm('Вы уверены, что хотите удалить эту заявку?')">
+                    <button style="background-color: #6c757d; color: white;">Удалить</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${isUser}">
+        <h2>Добавить новую заявку</h2>
+        <form th:action="@{/addOrder}" method="post">
+            <div class="form-group">
+                <label for="deviceType">Тип устройства:</label>
+                <select id="deviceType" name="deviceType" required>
+                    <option value="">Выберите тип</option>
+                    <option value="Ноутбук">Ноутбук</option>
+                    <option value="Стационарный ПК">Стационарный ПК</option>
+                    <option value="Монитор">Монитор</option>
+                    <option value="Принтер">Принтер</option>
+                    <option value="Смартфон">Смартфон</option>
+                    <option value="Планшет">Планшет</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="deviceModel">Модель:</label>
+                <input type="text" id="deviceModel" name="deviceModel" required>
+            </div>
+
+            <div class="form-group">
+                <label for="problemDescription">Описание проблемы:</label>
+                <textarea id="problemDescription" name="problemDescription" rows="3" cols="50" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="clientName">Имя клиента:</label>
+                <input type="text" id="clientName" name="clientName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="clientPhone">Телефон:</label>
+                <input type="tel" id="clientPhone" name="clientPhone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline">Срок выполнения:</label>
+                <input type="date" id="deadline" name="deadline" required>
+            </div>
+
+            <button type="submit" style="background-color: #007bff; color: white;">Добавить заявку</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
