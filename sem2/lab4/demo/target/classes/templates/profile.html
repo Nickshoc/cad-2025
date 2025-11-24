@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .profile-card { border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }
+        .profile-info { margin: 10px 0; }
+        .success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .actions { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Профиль пользователя</h1>
+
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <div class="profile-card">
+        <div class="profile-info">
+            <strong>Имя пользователя:</strong>
+            <span th:text="${user.username}"></span>
+        </div>
+        <div class="profile-info">
+            <strong>Email:</strong>
+            <span th:text="${user.email}"></span>
+        </div>
+        <div class="profile-info">
+            <strong>Полное имя:</strong>
+            <span th:text="${user.fullName}"></span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a th:href="@{/}">
+            <button>На главную</button>
+        </a>
+    </div>
+</div>
+</body>
+</html>
