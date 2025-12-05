@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Ремонтная мастерская</string>
+
+    <string name="login_title">Ремонтная мастерская</string>
+    <string name="username_hint">Имя пользователя</string>
+    <string name="password_hint">Пароль</string>
+    <string name="login_button">Войти</string>
+    <string name="error_empty_fields">Заполните все поля</string>
+    <string name="error_invalid_credentials">Неверные логин или пароль</string>
+    <string name="error_connection">Ошибка подключения</string>
+
+    <string name="orders_title">Мои заявки</string>
+    <string name="welcome_message">Добро пожаловать</string>
+    <string name="logout_button">Выйти</string>
+    <string name="create_order_button">+ Новая заявка</string>
+    <string name="role_label">Роль:</string>
+    <string name="role_user">Пользователь</string>
+    <string name="role_operator">Оператор</string>
+    <string name="role_admin">Администратор</string>
+
+    <string name="create_order_title">Новая заявка на ремонт</string>
+    <string name="device_type_hint">Тип устройства</string>
+    <string name="device_model_hint">Модель устройства</string>
+    <string name="problem_description_hint">Описание проблемы</string>
+    <string name="client_name_hint">Имя клиента</string>
+    <string name="client_phone_hint">Телефон клиента</string>
+    <string name="deadline_hint">Срок выполнения</string>
+    <string name="create_button">Создать заявку</string>
+    <string name="required_field">Обязательное поле</string>
+
+    <string name="status_new">НОВАЯ</string>
+    <string name="status_accepted">ПРИНЯТА</string>
+    <string name="status_completed">ВЫПОЛНЕНА</string>
+    <string name="status_rejected">ОТКЛОНЕНА</string>
+
+    <string name="loading">Загрузка...</string>
+    <string name="order_created_success">Заявка успешно создана</string>
+    <string name="order_creation_failed">Ошибка создания заявки</string>
+    <string name="orders_loading_failed">Ошибка загрузки заявок</string>
+    <string name="check_connection">Проверьте подключение к серверу</string>
+</resources>
